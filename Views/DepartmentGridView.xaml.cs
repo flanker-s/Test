@@ -1,0 +1,64 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using Test.ViewModels;
+
+namespace Test.Views
+{
+    /// <summary>
+    /// Interaction logic for DepartmentsView.xaml
+    /// </summary>
+    public partial class DepartmentGridView : UserControl
+    {
+        public DepartmentGridView()
+        {
+            InitializeComponent();
+        }
+
+        private void TextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is TextBox textBox)
+            {
+                textBox.IsReadOnly = false;
+            }
+        }
+
+        private void TextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is TextBox textBox)
+            {
+                textBox.IsReadOnly = true;
+            }
+        }
+
+        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (sender is DepartmentGridView view)
+            {
+                if (view.DataContext is DepartmentGridViewModel viewModel)
+                {
+                    if(view.IsVisible)
+                    {
+                        viewModel.Init();
+                    } 
+                    else
+                    {
+                        viewModel.Clear();
+                    }
+                }
+
+            }
+        }
+    }
+}

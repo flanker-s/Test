@@ -1,0 +1,116 @@
+﻿<UserControl x:Class="Test.Views.EmployeeGridView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:v="clr-namespace:Test.Views"
+             xmlns:vm="clr-namespace:Test.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" IsVisibleChanged="UserControl_IsVisibleChanged">
+    <UserControl.Resources>
+        <Style TargetType="TextBox" x:Key="EditableTextBoxStyle">
+            <Style.Triggers>
+                <Trigger Property="IsReadOnly" Value="True">
+                    <Setter Property="Cursor" Value="Arrow" />
+                </Trigger>
+                <Trigger Property="IsReadOnly" Value="False">
+                    <Setter Property="Cursor" Value="IBeam" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Button Grid.Row="0" Content="Добавить сотрудника"
+                Command="{Binding AddEmpoyeeCommand}"
+                HorizontalAlignment="Left" VerticalAlignment="Top"
+                Margin="10,10,0,0" Width="Auto"/>
+
+        <DataGrid Grid.Row="1" ItemsSource="{Binding EmployeeVMs}"
+                  AutoGenerateColumns="False"
+                  AlternatingRowBackground="AliceBlue"
+                  CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="ID" Width="1*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Id}"></TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Имя" Width="4*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding FirstName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" IsReadOnly="True" 
+                                     MouseDoubleClick="TextBox_MouseDoubleClick" 
+                                     LostFocus="TextBox_LostFocus"
+                                     ToolTip="Двойной клик для редактирования поля. После окончания ввода нажмите Enter"
+                                     Style="{StaticResource EditableTextBoxStyle}"></TextBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Фамилия" Width="4*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding LastName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" IsReadOnly="True" 
+                                     MouseDoubleClick="TextBox_MouseDoubleClick"
+                                     LostFocus="TextBox_LostFocus"
+                                     ToolTip="Двойной клик для редактирования поля. После окончания ввода нажмите Enter"
+                                     Style="{StaticResource EditableTextBoxStyle}"></TextBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Подразделение" Width="8*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Expander Header="{Binding DepartmentName}">
+                                <v:DepartmentView Grid.Row="1" DataContext="{Binding DepartmentVM}"/>
+                            </Expander>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Width="4*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <ComboBox Grid.Row="0" ItemsSource="{Binding DepartmentVMs}" 
+                                       SelectedItem="{Binding SelectedDepartmentVM, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                       IsSynchronizedWithCurrentItem="True"
+                                       HorizontalAlignment="Stretch">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Path=Name}"></TextBlock>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="DropDownOpened">
+                                            <i:InvokeCommandAction Command="{Binding GetDepartmentsCommand}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </ComboBox>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+            <DataGrid.RowStyle>
+                <Style TargetType="{x:Type DataGridRow}">
+                    <Style.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightBlue" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="Black" />
+                    </Style.Resources>
+                </Style>
+            </DataGrid.RowStyle>
+        </DataGrid>
+    </Grid>
+</UserControl>
